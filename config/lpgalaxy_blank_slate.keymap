@@ -15,18 +15,41 @@
 #include "custom_modifiers.h"
 
 #define COPILOT  LSGK(F23)
-#define SOUSCHEF RCAK(F24)
+// linux unicode input
+#define LUC      LSCK(U)
+// Windows unicode input
+#define WUC      LA(X)
 
 #define QWERTY_BASE 1
 
-#define TBLE_ORTHO   1
+#define TBLE_ORTHO  1
 
-#define NAV_L 1
-#define NUM_L 2
-#define SYM_L 3
+// layers
+#define DEFAULT         0
+#define QWERTY          0
+#define RESERVED        1
+#define RSE             2
+#define LWR             3
+#define NUM             4
+#define FUNC            5
+#define CONFIG          6
 
-// Using layer taps on thumbs, having quick tap as well helps w/ repeating space/backspace
-&lt { quick_tap_ms = <200>; };
+
+/*
+ * Key numbering cheat sheet:
+ * 
+ * 0     1    2   3   4   5   6  7    8    9  10   11
+ * ESQ   Q    W   E   R   T   Y  U    I    O  P    BKSP
+ * 
+ * 12    13   14  15  16  17  18 19   20   21 22   23
+ * TAB   A    S   D   F   G   H  J    K    L  ;    QUOT 
+ *  
+ * 24    25   26  27  28  29  30 31   32   33 34   35
+ * Shift Z    X   C   V   B   N   M   ,    .  /    RET
+ *
+ * 36    37   38  39  40  41  42  43  44   45 46   47
+ * CTRL  none GUI ALT RSE SPC SPC LWR LEFT UP DOWN RIGHT
+ */
 
 #define BT(n) BT_SEL n
 
@@ -35,25 +58,7 @@
        zmk,matrix_transform =
                        &ortho_transform;
     };
-
-    macros {
-      ZMK_MACRO(thumbs_up,
-		wait-ms = <1>;
-		tap-ms = <5>;
-                bindings = <&kp PLUS &kp COLON &kp PLUS &kp N1 &kp COLON &kp RET>;
-		)
-    };
     
-    tap_dances {
-    	shifty: shift_caps_word {
-		compatible = "zmk,behavior-tap-dance";
-		label = "TD_SHIFTY";
-		#binding-cells = <0>;
-		tapping-term-ms = <150>;
-		bindings = <&kp LSHFT>, <&caps_word>;
-	};
-    };
-
 
     keymap {
         compatible = "zmk,keymap";
@@ -61,44 +66,72 @@
         base_layer {
             label = "Base";
             bindings = <
- &kp ESC    &kp Q      &kp W      &kp E       &kp R          &kp T          &kp Y            &kp U          &kp I       &kp O      &kp P         &kp BKSP
- &kp TAB    &kp A      &kp S      &kp D       &kp F          &kp G          &kp H            &kp J          &kp K       &kp L      &kp SEMI      &kp QUOT
- &kp LSHFT  &kp Z      &kp X      &kp C       &kp V          &kp B          &kp N            &kp M          &kp COMMA   &kp DOT    &kp FSLH      &kp RET
- &kp LCTRL  &mo SYM_L   &kp LGUI  &kp LALT    &mo NAV_L      &kp SPACE      &kp RET          &mo NUM_L      &kp LEFT    &kp UP     &kp DOWN      &kp RIGHT
+              &kp ESC    &kp Q      &kp W      &kp E       &kp R          &kp T          &kp Y            &kp U          &kp I       &kp O      &lt FUNC P     &kp        BKSP
+              &kp TAB    &kp A      &kp S      &kp D       &kp F          &kp G          &kp H            &kp J          &kp K       &kp L      &kp      SEMI  &lt CONFIG QUOT
+              &kp LSHFT  &kp Z      &kp X      &kp C       &kp V          &kp B          &kp N            &kp M          &kp COMMA   &kp DOT    &kp      FSLH  &kp        RET
+              &kp LCTRL  &none      &kp LGUI  &kp LALT     &mo RSE        &lt NUM SPACE  &kp SPACE        &mo LWR        &kp LEFT    &kp UP     &kp      DOWN  &kp        RIGHT
             >;
         };
 
-        nav_layer {
-            label = "Nav";
+        reserved_layer {
+            label = "reserved";
             bindings = <
-&bt BT_CLR &trans     &trans     &trans      &trans          &trans       &trans     &trans         &trans      &trans     &trans     &kp DEL
-&trans     &trans     &trans     &trans      &trans          &trans       &trans     &kp LEFT       &kp DOWN    &kp UP     &kp RIGHT  &trans
-&trans     &bt BT(0)  &bt BT(1)  &bt BT(2)   &bt BT(3)       &bt BT(4)    &trans     &kp HOME       &kp PG_DN   &kp PG_UP  &kp END    &trans
-&trans  &trans        &trans     &trans      &trans          &trans       &trans    &trans  &trans         &trans &trans &trans
+              &none      &none      &none     &none        &none          &none          &none            &none          &none       &none      &none     &none
+              &none      &none      &none     &none        &none          &none          &none            &none          &none       &none      &none     &none
+              &none      &none      &none     &none        &none          &none          &none            &none          &none       &none      &none     &none
+              &kp LCTRL  &none      &kp LGUI  &kp LALT     &mo LWR        &kp SPACE      &kp SPACE        &mo RSE        &kp LEFT    &kp UP     &kp DOWN  &kp RIGHT
             >;
         };
 
-        num_layer {
-            label = "Num";
+        lwr_layer {
+            label = "LWR";
             bindings = <
-&trans     &kp LBKT   &trans &trans &trans    &kp RBKT    &kp C_PREV    &kp N7     &kp N8      &kp N9       &trans     &trans
-&trans     &kp MINUS  &trans &trans &trans    &kp EQUAL   &kp C_NEXT    &kp N4     &kp N5      &kp N6       &trans     &trans
-&trans     &kp GRAVE  &trans &trans &trans    &kp BSLH    &trans        &kp N1     &kp N2      &kp N3       &trans     &trans
-&trans  &trans       &trans     &kp N0      &trans    &none         &none     &kp ESC        &kp DEL      &trans &trans &trans
+	      &kp   GRAVE   &kp   EXCL      &kp   AT       &kp   HASH        &kp   DOLLAR        &kp   PERCENT        &kp   CARET          &kp   AMPS          &kp   ASTERISK   &kp   LPAR        &kp   RPAR        &kp   BKSP
+              &kp   CAPS    &kp   F9        &kp   F10      &kp   F11         &kp   F12           &kp   PRINTSCREEN    &kp   SCROLLLOCK     &kp   UNDER         &kp   PLUS       &kp   LBKT        &kp   RBKT        &kp   PIPE
+              &kp   LPAR    &kp   F13       &kp   F14      &kp   F15         &kp   F16           &kp   PAUSE_BREAK    &kp   INS            &kp   LBRC          &kp   RBRC       &kp   HOME        &kp   END         &kp   RPAR
+	      &kp   LCTRL   &none           &kp   LGUI     &kp   LALT        &none               &kp   DEL            &kp   DEL            &none               &none            &none             &none             &none 
             >;
         };
 
-        sym_layer {
-            label = "Sym";
+        rse_layer {
+            label = "RSE";
             bindings = <
-&trans     &kp LBRC   &kp AMPS   &kp STAR    &kp LPAR     &kp RBRC     &trans     &trans    &trans       &trans       &trans     &bootloader
-&trans     &kp COLON  &kp DLLR   &kp PRCNT   &kp CARET    &kp PLUS     &trans     &trans    &trans       &trans       &trans     &trans
-&trans     &kp TILDE  &kp EXCL   &kp AT      &kp HASH     &kp PIPE     &trans     &trans    &trans       &trans       &trans     &trans
-&trans &trans        &trans     &kp RPAR        &trans          &trans       &trans    &trans  &trans         &trans &trans &trans
+	      &kp   TILDE   &kp   NUMBER_1  &kp   NUMBER_2 &kp   NUMBER_3    &kp   NUMBER_4      &kp   NUMBER_5       &kp   NUMBER_6       &kp   NUMBER_7      &kp   NUMBER_8   &kp   NUMBER_9    &kp   NUMBER_0    &kp   BKSP
+              &kp   CAPS    &kp   F1        &kp   F2       &kp   F3          &kp   F4            &kp   PRINTSCREEN    &kp   SCROLLLOCK     &kp   MINUS         &kp   EQUAL      &kp   LBKT        &kp   RBKT        &kp   BACKSLASH
+              &kp   LPAR    &kp   F5        &kp   F6       &kp   F7          &kp   F8            &kp   PAUSE_BREAK    &kp   INS            &kp   BACKSLASH     &kp   BACKSLASH  &kp   PAGE_UP     &kp   PAGE_DOWN   &kp   LBKT
+	      &kp   LCTRL   &none           &kp   LGUI     &kp   LALT        &none               &kp   BKSP           &kp   BKSP           &none               &none            &none             &kp   ESC         &kp   RBKT 
             >;
         };
 
+        number_layer {
+                        label = "NUM";
+                            bindings = <
+              &kp TILDE         &kp NUMBER_1   &kp NUMBER_2   &kp NUMBER_3   &none               &none                &none                &none                &none           &none             &none             &kp PRINTSCREEN
+              &mkp LCLK         &kp NUMBER_4   &kp NUMBER_5   &kp NUMBER_6   &none               &none                &none                &none                &none           &none             &none             &none
+	      &mkp RCLK         &kp NUMBER_7   &kp NUMBER_8   &kp NUMBER_9   &none               &none                &none                &none                &kp HOME        &kp PAGE_UP       &kp  PAGE_DOWN    &kp   END
+              &kp LCTRL         &none          &kp LGUI       &kp NUMBER_0   &none               &none                &none                &none                &kp LEFT        &kp UP            &kp  DOWN         &kp   RIGHT
+                        >;
+                };
+
+        func_layer {
+            label = "FUNC";
+            bindings = <
+              &kp   F1      &kp   F2       &kp  F3         &kp    F4         &kp   F5            &kp   F6             &kp   F7            &kp   F8             &none            &none             &none             &none
+              &kp   F9      &kp   F10      &kp  F11        &kp   F12         &kp   F13           &kp   F14            &kp   F15           &kp   F16            &none            &none             &none             &none
+	      &kp   F17     &kp   F18      &kp  F19        &kp   F20         &kp   F21           &kp   F22            &kp   F23           &kp   F24            &none            &none             &none             &none
+	      &kp   LCTRL   &none          &kp   LGUI      &kp   LALT        &none               &none                &none               &none                &none            &none             &none             &none 
+            >;
+        };
+
+        config_layer {
+            label = "Config";
+            bindings = <
+              &sys_reset     &none         &none         &none           &none           &none     &bt  BT_CLR        &bt BT_PRV        &bt BT_NXT      &bt BT_CLR_ALL    &none             &none 
+              &bootloader    &none         &none         &none           &none           &none     &bt  BT_SEL 0      &bt BT_SEL 1      &bt BT_SEL 2    &bt BT_SEL 3      &bt BT_SEL 4      &none 
+              &soft_off      &none         &none         &none           &none           &none     &bt  BT_DISC 0     &bt BT_DISC 1     &bt BT_DISC 2   &bt BT_DISC 3     &bt BT_DISC 4     &ext_power EP_TOG
+              &out  OUT_USB  &out  OUT_BLE &out  OUT_TOG &none           &none           &none     &none              &none             &none           &none             &ext_power EP_ON  &ext_power EP_OFF      
+            >;
+        };
 
     };
 };
-

@@ -14,3 +14,4 @@
 ---
 include:
   - board: lpgalaxy_blank_slate
+    snippet: zmk-usb-logging
